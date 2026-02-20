@@ -56,58 +56,62 @@ This project consists of two major components:
 |                    STONEBRANCH UNIVERSAL AUTOMATION CENTER                  |
 +===========================================================================+
 |                                                                           |
-|  +----------------------------+      +-------------------------------+    |
-|  |   OMS / Controller (UC)    |      |   OMS / Controller (UC)       |    |
-|  |   CTC On-Premise           |      |   AWS EC2                     |    |
-|  |   (Ubuntu VM)              |      |   (DR Site)                   |    |
-|  |                            |      |                               |    |
-|  |  - Workflow Engine         |      |  - Workflow Engine             |    |
-|  |  - Task Scheduler          |      |  - Task Scheduler             |    |
-|  |  - Approval Management     |      |  - Approval Management        |    |
-|  |  - Variable Resolution     |      |  - Variable Resolution        |    |
-|  |  - Credential Vault        |      |  - Credential Vault           |    |
-|  |  - Audit / Logging         |      |  - Audit / Logging            |    |
-|  |  - Universal Control Plane |      |                               |    |
-|  +-------------+--------------+      +---------------+---------------+    |
-|                |                                     |                    |
-|     Agent Communication (TLS)             Agent Communication (TLS)       |
-|                |                                     |                    |
-|  +-------------v--------------+      +---------------v---------------+   |
+|  +----------------------------+                                           |
+|  |   OMS / Controller (UC)    |                                           |
+|  |   CTC On-Premise           |                                           |
+|  |   (Ubuntu VM)              |                                           |
+|  |                            |                                           |
+|  |  - Workflow Engine         |                                           |
+|  |  - Task Scheduler          |                                           |
+|  |  - Approval Management     |                                           |
+|  |  - Variable Resolution     |                                           |
+|  |  - Credential Vault        |                                           |
+|  |  - Audit / Logging         |                                           |
+|  |  - Universal Control Plane |                                           |
+|  +-------------+--------------+                                           |
+|                |                                                          |
+|                +-------- Agent Communication (TLS) --------+              |
+|                |                                           |              |
+|  +-------------v--------------+      +---------------------v---------+   |
 |  |    PRODUCTION AGENTS       |      |      DR AGENTS                |   |
 |  |    (CTC On-Premise VMs)    |      |      (AWS EC2 Instances)      |   |
 |  |                            |      |                               |   |
 |  |  +--------------------+    |      |  +------------------------+   |   |
-|  |  | AGNT0003           |    |      |  | AGNT0005               |   |   |
-|  |  | ccoestonebranchapp2|    |      |  | ip-10-0-1-242          |   |   |
-|  |  | Role: DB Server    |    |      |  | Role: DR Orchestrator  |   |   |
-|  |  | - mysqldump        |    |      |  | - AWS CLI (ec2 cmds)   |   |   |
+|  |  | AGNT0002           |    |      |  | AGNT0005               |   |   |
+|  |  | <prod-appdb-host>|    |      |  | <dr-orchestrator-host>          |   |   |
+|  |  | Role: App Server   |    |      |  | Role: DR Orchestrator  |   |   |
+|  |  | - Spring Boot      |    |      |  | - AWS CLI (ec2 cmds)   |   |   |
+|  |  | - Java 11 / Maven  |    |      |  +------------------------+   |   |
+|  |  +--------------------+    |      |                               |   |
+|  |                            |      |  +------------------------+   |   |
+|  |  +--------------------+    |      |  | AGNT0006               |   |   |
+|  |  | AGNT0003           |    |      |  | <dr-appfile-host>          |   |   |
+|  |  | <prod-appdb-host>|    |      |  | Role: DR App/File Svr  |   |   |
+|  |  | Role: DB Server    |    |      |  | - gzip, cp, aws s3     |   |   |
+|  |  | - mysqldump        |    |      |  | - Maven (Spring Boot)  |   |   |
 |  |  | - gzip             |    |      |  +------------------------+   |   |
 |  |  | - AWS CLI (s3)     |    |      |                               |   |
 |  |  +--------------------+    |      |  +------------------------+   |   |
-|  |                            |      |  | AGNT0006               |   |   |
-|  |  +--------------------+    |      |  | ip-10-0-1-210          |   |   |
-|  |  | AGNT0004           |    |      |  | Role: DR App/File Svr  |   |   |
-|  |  | ccoestonebranchapp3|    |      |  | - gzip, cp, aws s3     |   |   |
-|  |  | Role: File Server  |    |      |  | - Maven (Spring Boot)  |   |   |
+|  |                            |      |  | AGNT0007               |   |   |
+|  |  +--------------------+    |      |  | <dr-db-host>          |   |   |
+|  |  | AGNT0004           |    |      |  | Role: DR DB Server     |   |   |
+|  |  | <prod-file-host>|    |      |  | - mysql client         |   |   |
+|  |  | Role: File Server  |    |      |  | - gzip, aws s3         |   |   |
 |  |  | - gzip             |    |      |  +------------------------+   |   |
-|  |  | - AWS CLI (s3)     |    |      |                               |   |
-|  |  | - NFS mount access |    |      |  +------------------------+   |   |
-|  |  +--------------------+    |      |  | AGNT0007               |   |   |
-|  |                            |      |  | ip-10-0-1-144          |   |   |
-|  +----------------------------+      |  | Role: DR DB Server     |   |   |
-|                                      |  | - mysql client         |   |   |
-|                                      |  | - gzip, aws s3         |   |   |
-|                                      |  +------------------------+   |   |
-|                                      +-------------------------------+   |
+|  |  | - AWS CLI (s3)     |    |      +-------------------------------+   |
+|  |  | - NFS mount access |    |                                          |
+|  |  +--------------------+    |                                          |
+|  |                            |                                          |
+|  +----------------------------+                                          |
 |                                                                          |
 |  +-------------------------------------------------------------------+   |
 |  |                    SHARED SERVICES                                 |   |
 |  |                                                                   |   |
 |  |  +------------------+  +------------------+  +-----------------+  |   |
 |  |  | Amazon S3        |  | Credential Store |  | Approval Engine |  |   |
-|  |  | Backup Storage   |  | cred_ccoeadmin   |  | Approvers:      |  |   |
-|  |  | ccoe-stonebranch |  | (Stonebranch     |  |  - Momoyo       |  |   |
-|  |  | -poc-1           |  |  managed)        |  |  - Fernando     |  |   |
+|  |  | Backup Storage   |  | <credential-name>|  | Approvers:      |  |   |
+|  |  | <your-s3-bucket> |  | (Stonebranch     |  |  - <Approver1>   |  |   |
+|  |  |                  |  |  managed)        |  |  - <Approver2>   |  |   |
 |  |  +------------------+  +------------------+  +-----------------+  |   |
 |  +-------------------------------------------------------------------+   |
 +===========================================================================+
@@ -115,9 +119,9 @@ This project consists of two major components:
 
 ### How the Components Interact
 
-1. **OMS (Operations Manager Server)** is the brain -- it schedules workflows, dispatches tasks to agents, manages variables, and handles approvals.
-2. **Universal Agents** are lightweight daemons installed on each managed server. They receive task instructions from the OMS, execute shell commands locally, and report results back.
-3. **Universal Control Plane** (on the CTC on-premise OMS) provides centralized governance across both sites.
+1. **OMS (Operations Manager Server)** is the brain -- it schedules workflows, dispatches tasks to agents, manages variables, and handles approvals. There is a single OMS on the CTC on-premise Ubuntu VM.
+2. **Universal Control Plane** (on the CTC on-premise OMS) provides centralized governance, managing both production on-premise agents and DR agents running on AWS EC2 instances from a single control point.
+3. **Universal Agents** are lightweight daemons installed on each managed server. They receive task instructions from the OMS over TLS, execute shell commands locally, and report results back. Both on-premise and AWS agents connect back to the single on-premise OMS.
 4. **Amazon S3** serves as the intermediate backup store -- production agents push backups up, DR agents pull them down during failover.
 5. **Approval Engine** pauses the DR workflow at 3 critical gates, requiring human sign-off before proceeding.
 
@@ -148,7 +152,7 @@ This project consists of two major components:
 |  |           |      |             |      |              |                   |
 |  | Universal |      | Universal   |      | Universal    |                   |
 |  | Agent     |      | Agent       |      | Agent        |                   |
-|  | installed |      | (AGNT0003)  |      | (AGNT0004)   |                   |
+|  | (AGNT0002)|      | (AGNT0003)  |      | (AGNT0004)   |                   |
 |  |           |      |             |      |              |                   |
 |  | Spring    |      | MySQL 8.x   |      | NFS Server   |                   |
 |  | Boot App  |      | db_example  |      | /var/nfs/    |                   |
@@ -163,7 +167,7 @@ This project consists of two major components:
         |                    v                    v
         |         +----------------------------+
         |         |       Amazon S3            |
-        |         |  ccoe-stonebranch-poc-1    |
+        |         |  <your-s3-bucket>    |
         |         |                            |
         |         |  testdb_backup.sql_        |
         |         |    YYYYMMDD.gz             |
@@ -180,22 +184,16 @@ This project consists of two major components:
 |       |              AWS EC2 Instances           |                           |
 +=======|==========================================|===========================+
 |                                                                             |
-|  EC2: OMS                                                                   |
-|  +-----------------------------------------------------------------------+  |
-|  |  Stonebranch OMS (DR Site)                                            |  |
-|  |  - Receives workflow dispatches                                       |  |
-|  |  - Manages DR agents                                                  |  |
-|  +-----------------------------------------------------------------------+  |
-|       |                    |                    |                            |
-|       | Agent Conn.        | Agent Conn.        | Agent Conn.               |
-|       v                    v                    v                            |
+|  (No OMS here -- all DR agents connect back to                              |
+|   the CTC on-premise OMS via Universal Control Plane over TLS)              |
+|                                                                             |
 |  +-----------+      +-------------+      +--------------+                   |
 |  | EC2:      |      | EC2:        |      | EC2:         |                   |
 |  | DR App/   |      | DR DB       |      | DR           |                   |
 |  | File Svr  |      | Server      |      | Orchestrator |                   |
 |  |           |      |             |      |              |                   |
 |  | AGNT0006  |      | AGNT0007    |      | AGNT0005     |                   |
-|  | 10.0.1.210|      | 10.0.1.144  |      | 10.0.1.242   |                   |
+|  | <DR_APP_IP>|      | <DR_DB_IP>  |      | <DR_ORCH_IP>   |                   |
 |  |           |      |             |      |              |                   |
 |  | Spring    |      | MySQL 8.x   |      | AWS CLI      |                   |
 |  | Boot App  |      | (restored)  |      | ec2 start/   |                   |
@@ -207,9 +205,9 @@ This project consists of two major components:
 |                                          +--------------+                   |
 |                                                                             |
 |  EC2 Instance IDs:                                                          |
-|    DB Server:   i-04784d39a4c5c256c                                         |
-|    File Server: i-0fdd1546ba7a45cfa                                         |
-|    App Server:  i-0d7ae2f9fb987c75e                                         |
+|    DB Server:   i-0xxxxxxxxxxxxx01                                         |
+|    File Server: i-0xxxxxxxxxxxxx02                                         |
+|    App Server:  i-0xxxxxxxxxxxxx03                                         |
 |                                                                             |
 +=============================================================================+
 
@@ -307,9 +305,9 @@ The `MainController` provides a combined response returning a "hello world" mess
 
 | Property | Value | Description |
 |---|---|---|
-| `spring.datasource.url` | `jdbc:mysql://10.12.197.214:3306/db_example` | MySQL connection (production on-premise IP) |
-| `spring.datasource.username` | `springappuser` | MySQL user |
-| `spring.datasource.password` | `password` | MySQL password |
+| `spring.datasource.url` | `jdbc:mysql://<DB_SERVER_IP>:3306/db_example` | MySQL connection (production on-premise IP) |
+| `spring.datasource.username` | `<DB_USER>` | MySQL user |
+| `spring.datasource.password` | `<DB_PASSWORD>` | MySQL password |
 | `spring.jpa.hibernate.ddl-auto` | `update` | Auto-create/update schema from entities |
 | `spring.datasource.driver-class-name` | `com.mysql.cj.jdbc.Driver` | MySQL JDBC driver |
 | `spring.jackson.serialization.indent_output` | `true` | Pretty-print JSON responses |
@@ -348,9 +346,9 @@ All workflow and task definitions are stored as JSON files under `stonebranch/` 
 
 **Purpose:** Daily automated backup of the MySQL `db_example` database to Amazon S3.
 
-**Agent:** `ccoestonebranchapp2 - AGNT0003` (Production DB Server, CTC On-Premise)
+**Agent:** `<prod-appdb-host> - AGNT0003` (Production DB Server, CTC On-Premise)
 
-**Credentials:** `cred_ccoeadmin`
+**Credentials:** `<credential-name>`
 
 ```
 +-----------------+     +------------------+     +------------------+     +--------------------+
@@ -363,9 +361,9 @@ All workflow and task definitions are stored as JSON files under `stonebranch/` 
 
 | Step | Task | What It Does |
 |---|---|---|
-| 1 | **DBServerBKUP_MAIN** | `mysqldump -u springappuser -p'password' db_example > /tmp/testdb_backup.sql` |
+| 1 | **DBServerBKUP_MAIN** | `mysqldump -u <DB_USER> -p'<DB_PASSWORD>' db_example > /tmp/testdb_backup.sql` |
 | 2 | **DBServerBKUP_ZIP** | `gzip -c /tmp/testdb_backup.sql > /tmp/testdb_backup.sql_YYYYMMDD.gz` |
-| 3 | **DBServerBKUP_S3UP** | `aws s3 cp /tmp/testdb_backup.sql_YYYYMMDD.gz s3://ccoe-stonebranch-poc-1/` |
+| 3 | **DBServerBKUP_S3UP** | `aws s3 cp /tmp/testdb_backup.sql_YYYYMMDD.gz s3://<your-s3-bucket>/` |
 | 4 | **DBServerBKUP_S3Check** | Verifies the file exists in S3 via `s3api head-object`; exits `1` on failure |
 
 **Runtime:** ~40 seconds average | 24 runs total | Scheduled daily at 08:00 (UTC+8)
@@ -376,9 +374,9 @@ All workflow and task definitions are stored as JSON files under `stonebranch/` 
 
 **Purpose:** Daily automated backup of NFS files to Amazon S3.
 
-**Agent:** `ccoestonebranchapp3 - AGNT0004` (Production File Server, CTC On-Premise)
+**Agent:** `<prod-file-host> - AGNT0004` (Production File Server, CTC On-Premise)
 
-**Credentials:** `cred_ccoeadmin`
+**Credentials:** `<credential-name>`
 
 ```
 +------------------+     +-------------------+     +---------------------+
@@ -392,7 +390,7 @@ All workflow and task definitions are stored as JSON files under `stonebranch/` 
 | Step | Task | What It Does |
 |---|---|---|
 | 1 | **FileServerBKUP_ZIP** | `gzip -c /var/nfs/shared_folder/testfile1 > /var/nfs/shared_folder/testfile1_YYYYMMDD.gz` |
-| 2 | **FileServerBKUP_S3UP** | `aws s3 cp testfile1_YYYYMMDD.gz s3://ccoe-stonebranch-poc-1/` |
+| 2 | **FileServerBKUP_S3UP** | `aws s3 cp testfile1_YYYYMMDD.gz s3://<your-s3-bucket>/` |
 | 3 | **FileServerBKUP_S3Check** | Verifies the file exists in S3; exits `1` on failure |
 
 **Runtime:** ~21 seconds average | 20 runs total | Scheduled daily at 08:00 (UTC+8)
@@ -453,7 +451,7 @@ Boots all three DR EC2 instances in dependency order (DB -> File -> App) and ver
 | **APServer_Start** | AGNT0005 | `aws ec2 start-instances --instance-ids $WF_AP_INSTANCE_ID` | -- |
 | **APServer_Check** | AGNT0005 | `sleep 20 && aws ec2 describe-instances` (check state=running) | 16s |
 
-**Approval Gate 1:** Requires sign-off from **Momoyo** or **Fernando** before proceeding to data restore.
+**Approval Gate 1:** Requires sign-off from **<Approver1>** or **<Approver2>** before proceeding to data restore.
 
 #### Phase 2: Database Restore
 
@@ -461,10 +459,10 @@ Downloads the latest DB backup from S3, decompresses, verifies, and imports into
 
 | Task | Agent | Command |
 |---|---|---|
-| **DBFile_S3Downld** | AGNT0007 | `aws s3 cp s3://ccoe-stonebranch-poc-1/testdb_backup.sql_YYYYMMDD.gz /tmp/` |
+| **DBFile_S3Downld** | AGNT0007 | `aws s3 cp s3://<your-s3-bucket>/testdb_backup.sql_YYYYMMDD.gz /tmp/` |
 | **DBFile_Unzip** | AGNT0007 | `gzip -d /tmp/testdb_backup.sql_YYYYMMDD.gz` |
 | **DBFile_Check** | AGNT0007 | `[ -f "/tmp/testdb_backup.sql_YYYYMMDD" ]` |
-| **DB_Restore** | AGNT0007 | `mysql -u springappuser -p'password' db_example < /tmp/testdb_backup.sql_YYYYMMDD` |
+| **DB_Restore** | AGNT0007 | `mysql -u <DB_USER> -p'<DB_PASSWORD>' db_example < /tmp/testdb_backup.sql_YYYYMMDD` |
 | **DB_Check** | AGNT0007 | `mysql ... -e "SHOW DATABASES LIKE 'db_example';"` |
 
 **Approval Gate 2:** Requires sign-off before restoring files.
@@ -475,7 +473,7 @@ Downloads the latest NFS file backup from S3, decompresses, verifies, and copies
 
 | Task | Agent | Command |
 |---|---|---|
-| **File_S3Downld** | AGNT0006 | `aws s3 cp s3://ccoe-stonebranch-poc-1/testfile1_YYYYMMDD.gz /tmp/` |
+| **File_S3Downld** | AGNT0006 | `aws s3 cp s3://<your-s3-bucket>/testfile1_YYYYMMDD.gz /tmp/` |
 | **File_Unzip** | AGNT0006 | `gzip -d /tmp/testfile1_YYYYMMDD.gz` |
 | **File_Check** | AGNT0006 | `[ -f "/tmp/testfile1_YYYYMMDD" ]` |
 | **File_Restore** | AGNT0006 | `cp -f /tmp/testfile1_YYYYMMDD /mnt/nfs_clientshare/testfile1` |
@@ -499,11 +497,12 @@ Starts the Spring Boot application and verifies it is running.
 
 | Agent ID | Hostname | Location | Role | Workflows |
 |---|---|---|---|---|
-| `AGNT0003` | `ccoestonebranchapp2` | CTC On-Premise VM 3 | Production MySQL Server | DBBackupFlow (all 4 tasks) |
-| `AGNT0004` | `ccoestonebranchapp3` | CTC On-Premise VM 4 | Production File Server | FileBackupFlow (all 3 tasks) |
-| `AGNT0005` | `ip-10-0-1-242` | AWS EC2 | DR Orchestrator | DRFailOverFlow Phase 1 (EC2 start/check) |
-| `AGNT0006` | `ip-10-0-1-210` | AWS EC2 | DR App/File Server | DRFailOverFlow Phases 3 & 4 (file restore, app start) |
-| `AGNT0007` | `ip-10-0-1-144` | AWS EC2 | DR DB Server | DRFailOverFlow Phase 2 (DB restore) |
+| `AGNT0002` | `<prod-appdb-host>` | CTC On-Premise VM 2 | Production App Server | Runs Spring Boot application |
+| `AGNT0003` | `<prod-appdb-host>` | CTC On-Premise VM 3 | Production MySQL Server | DBBackupFlow (all 4 tasks) |
+| `AGNT0004` | `<prod-file-host>` | CTC On-Premise VM 4 | Production File Server | FileBackupFlow (all 3 tasks) |
+| `AGNT0005` | `<dr-orchestrator-host>` | AWS EC2 | DR Orchestrator | DRFailOverFlow Phase 1 (EC2 start/check) |
+| `AGNT0006` | `<dr-appfile-host>` | AWS EC2 | DR App/File Server | DRFailOverFlow Phases 3 & 4 (file restore, app start) |
+| `AGNT0007` | `<dr-db-host>` | AWS EC2 | DR DB Server | DRFailOverFlow Phase 2 (DB restore) |
 
 ---
 
@@ -518,8 +517,8 @@ Starts the Spring Boot application and verifies it is running.
 | `WF_SQLDUMP_PATH` | `/usr/bin/mysqldump` | DBBackupFlow, DRFailOverFlow |
 | `WF_MYSQL_PATH` | `/usr/bin/mysql` | DRFailOverFlow |
 | `WF_AWS_PATH` | `/usr/local/bin/aws` | All workflows |
-| `WF_S3_PATH` | `s3://ccoe-stonebranch-poc-1/` | All workflows |
-| `WF_S3_BUCKET` | `ccoe-stonebranch-poc-1` | All workflows |
+| `WF_S3_PATH` | `s3://<your-s3-bucket>/` | All workflows |
+| `WF_S3_BUCKET` | `<your-s3-bucket>` | All workflows |
 | `WF_S3_BUCKUP_FILE` | `testdb_backup.sql` | DBBackupFlow, FileBackupFlow |
 | `WF_NFSFILE` | `testfile1` | FileBackupFlow, DRFailOverFlow |
 | `WF_NFSFILE_PATH` | `/var/nfs/shared_folder/testfile1` | FileBackupFlow, DRFailOverFlow |
@@ -528,9 +527,9 @@ Starts the Spring Boot application and verifies it is running.
 
 | Variable | Default Value | Description |
 |---|---|---|
-| `WF_DB_INSTANCE_ID` | `i-04784d39a4c5c256c` | EC2 instance ID for DR database server |
-| `WF_FILE_INSTANCE_ID` | `i-0fdd1546ba7a45cfa` | EC2 instance ID for DR file server |
-| `WF_AP_INSTANCE_ID` | `i-0d7ae2f9fb987c75e` | EC2 instance ID for DR application server |
+| `WF_DB_INSTANCE_ID` | `i-0xxxxxxxxxxxxx01` | EC2 instance ID for DR database server |
+| `WF_FILE_INSTANCE_ID` | `i-0xxxxxxxxxxxxx02` | EC2 instance ID for DR file server |
+| `WF_AP_INSTANCE_ID` | `i-0xxxxxxxxxxxxx03` | EC2 instance ID for DR application server |
 | `WF_DBBACKUP_FILE` | `testdb_backup.sql` | Database backup filename in S3 |
 | `WF_TEMP` | `/tmp/` | Temporary directory for downloads |
 | `WF_APP_PATH` | `/app/springapp-05/gs-accessing-data-mysql/complete` | Spring Boot application path on DR server |
@@ -543,29 +542,29 @@ Starts the Spring Boot application and verifies it is running.
 
 Before executing any workflow, ensure the following are in place:
 
-1. **Stonebranch OMS** is installed and running on both:
-   - CTC on-premise Ubuntu VM (primary OMS + Universal Control Plane)
-   - AWS EC2 instance (DR site OMS)
+1. **Stonebranch OMS** is installed and running on the CTC on-premise Ubuntu VM (primary OMS + Universal Control Plane). This single OMS manages all agents across both on-premise and AWS environments.
 
 2. **Universal Agents** are installed and registered:
    - Production: VMs for Application, MySQL, and File Server
    - DR: EC2 instances for Orchestrator, DB Server, and App/File Server
 
 3. **AWS CLI** is installed and configured on all agents that interact with S3 or EC2:
-   - Production agents: `AGNT0003`, `AGNT0004` (S3 access)
+   - Production agents: `AGNT0003` (S3 access), `AGNT0004` (S3 access)
    - DR agents: `AGNT0005` (EC2 management), `AGNT0006` (S3 access), `AGNT0007` (S3 access)
 
-4. **MySQL** is installed on production DB server and DR DB server.
+4. **Network connectivity** between the on-premise OMS and AWS EC2 instances is established (VPN, Direct Connect, or public TLS) so that DR agents can communicate with the Universal Control Plane.
 
-5. **NFS** is configured:
+5. **MySQL** is installed on production DB server and DR DB server.
+
+6. **NFS** is configured:
    - Production: NFS server exporting `/var/nfs/shared_folder/`
    - DR: NFS client mount at `/mnt/nfs_clientshare/`
 
-6. **Java 11+** and **Maven** are installed on the Application servers (production and DR).
+7. **Java 11+** and **Maven** are installed on the Application servers (production and DR).
 
-7. **S3 Bucket** `ccoe-stonebranch-poc-1` exists and is accessible from both sites.
+8. **S3 Bucket** `<your-s3-bucket>` exists and is accessible from both sites.
 
-8. **Spring Boot Application** source code is deployed to `/app/springapp-05/gs-accessing-data-mysql/complete` on both the production and DR application servers.
+9. **Spring Boot Application** source code is deployed to `/app/springapp-05/gs-accessing-data-mysql/complete` on both the production and DR application servers.
 
 ---
 
@@ -647,8 +646,8 @@ curl -X POST "$OMS_URL/api/task" \
 ### Step 2: Configure Credentials
 
 1. Navigate to **Security > Credentials** in the UAC Web UI.
-2. Create the credential `cred_ccoeadmin`:
-   - **Name:** `cred_ccoeadmin`
+2. Create the credential `<credential-name>`:
+   - **Name:** `<credential-name>`
    - **Runtime User:** The OS user that has permissions to run `mysqldump`, `mysql`, `gzip`, `aws`, and manage NFS files on the respective servers.
    - **Password:** The OS user's password.
 3. Assign this credential to all Unix tasks (it is already referenced in the task JSON definitions).
@@ -658,15 +657,16 @@ curl -X POST "$OMS_URL/api/task" \
 ### Step 3: Verify Agent Connectivity
 
 1. Navigate to **Agents > Agent List** in the UAC Web UI.
-2. Verify all 5 agents show **Active** status:
+2. Verify all 6 agents show **Active** status:
 
 | Agent | Expected Status |
 |---|---|
-| `ccoestonebranchapp2 - AGNT0003` | Active (Production DB Server) |
-| `ccoestonebranchapp3 - AGNT0004` | Active (Production File Server) |
-| `ip-10-0-1-242 - AGNT0005` | Active (DR Orchestrator) |
-| `ip-10-0-1-210 - AGNT0006` | Active (DR App/File Server) |
-| `ip-10-0-1-144 - AGNT0007` | Active (DR DB Server) |
+| `<prod-appdb-host> - AGNT0002` | Active (Production App Server) |
+| `<prod-appdb-host> - AGNT0003` | Active (Production DB Server) |
+| `<prod-file-host> - AGNT0004` | Active (Production File Server) |
+| `<dr-orchestrator-host> - AGNT0005` | Active (DR Orchestrator) |
+| `<dr-appfile-host> - AGNT0006` | Active (DR App/File Server) |
+| `<dr-db-host> - AGNT0007` | Active (DR DB Server) |
 
 3. If any agent shows **Offline**, SSH into the corresponding server and restart the agent:
    ```bash
@@ -723,7 +723,7 @@ curl -X POST "$OMS_URL/api/task" \
 2. After the scheduled time, verify both workflows completed with **Success** status.
 3. Verify S3 contains the expected files:
    ```bash
-   aws s3 ls s3://ccoe-stonebranch-poc-1/
+   aws s3 ls s3://<your-s3-bucket>/
    # Expected output:
    # testdb_backup.sql_YYYYMMDD.gz
    # testfile1_YYYYMMDD.gz
@@ -755,7 +755,7 @@ curl -X POST "$OMS_URL/api/task" \
 1. The workflow will pause at **ApprovalTask1** (vertex 46).
 2. Navigate to **Activity > Approval Tasks** (or check your email/notification if configured).
 3. Review the approval request -- confirm all 3 EC2 instances are running.
-4. **Approve** the task (requires either `Momoyo` or `Fernando`).
+4. **Approve** the task (requires either `<Approver1>` or `<Approver2>`).
 
 #### 6.4 Monitor Phase 2 -- Database Restore
 
