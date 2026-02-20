@@ -1,0 +1,694 @@
+{
+  "type" : "taskWorkflow",
+  "actions" : {
+    "abortActions" : [ ],
+    "emailNotifications" : [ ],
+    "setVariableActions" : [ ],
+    "snmpNotifications" : [ ],
+    "systemOperations" : [ ]
+  },
+  "avgRunTime" : 210,
+  "avgRunTimeDisplay" : "3 Minutes 30 Seconds",
+  "calculateCp" : false,
+  "calendar" : null,
+  "cpDuration" : null,
+  "cpDurationUnit" : "Minutes",
+  "criticalEndpoints" : [ ],
+  "customField1" : {
+    "label" : null,
+    "value" : null
+  },
+  "customField2" : {
+    "label" : null,
+    "value" : null
+  },
+  "efDayConstraint" : "None",
+  "efDuration" : "00:00:00:00",
+  "efEnabled" : false,
+  "efNthAmount" : 5,
+  "efOffsetDuration" : null,
+  "efOffsetDurationUnit" : "Minutes",
+  "efOffsetPercentage" : 0,
+  "efOffsetType" : "Percentage",
+  "efTime" : "00:00",
+  "efType" : "Time",
+  "enforceVariables" : false,
+  "exclusiveTasks" : [ ],
+  "exclusiveWithSelf" : false,
+  "executionRestriction" : "None",
+  "exportReleaseLevel" : "7.9.0.0",
+  "exportTable" : "ops_task_workflow",
+  "firstRun" : "2026-02-10 12:10:12 +0800",
+  "holdResources" : false,
+  "instanceWait" : "-- None --",
+  "instanceWaitLookup" : "Task",
+  "lastRun" : "2026-02-12 12:02:58 +0800",
+  "lastRunTime" : 365,
+  "lastRunTimeDisplay" : "6 Minutes 5 Seconds",
+  "layoutOption" : "-- None --",
+  "lfDayConstraint" : "None",
+  "lfDuration" : "00:00:00:00",
+  "lfEnabled" : false,
+  "lfNthAmount" : 5,
+  "lfOffsetDuration" : null,
+  "lfOffsetDurationUnit" : "Minutes",
+  "lfOffsetPercentage" : 0,
+  "lfOffsetType" : "Percentage",
+  "lfTime" : "00:00",
+  "lfType" : "Time",
+  "lockVariables" : false,
+  "logLevel" : "Inherited",
+  "lsDayConstraint" : "None",
+  "lsDuration" : "00:00:00:00",
+  "lsEnabled" : false,
+  "lsNthAmount" : 5,
+  "lsTime" : "00:00",
+  "lsType" : "Time",
+  "maxRunTime" : 365,
+  "maxRunTimeDisplay" : "6 Minutes 5 Seconds",
+  "minRunTime" : 161,
+  "minRunTimeDisplay" : "2 Minutes 41 Seconds",
+  "name" : "DRFailOverFlow",
+  "notes" : [ ],
+  "numberOfTasks" : 20,
+  "opswiseGroups" : [ ],
+  "overrideCalendar" : false,
+  "overrideInstanceWait" : "No",
+  "resPriority" : 10,
+  "resPriorityVar" : null,
+  "resolveNameImmediately" : false,
+  "restrictionPeriod" : "None",
+  "restrictionPeriodAfterDate" : null,
+  "restrictionPeriodAfterTime" : null,
+  "restrictionPeriodBeforeDate" : null,
+  "restrictionPeriodBeforeTime" : null,
+  "restrictionPeriodDateList" : [ ],
+  "retainSysIds" : true,
+  "runCount" : 9,
+  "runCriteria" : [ ],
+  "runTime" : 1887,
+  "simulation" : false,
+  "skippedOption" : "Show Skipped",
+  "startHeld" : false,
+  "startHeldReason" : null,
+  "stepActions" : [ ],
+  "stepConditions" : [ ],
+  "summary" : null,
+  "sysId" : "c9a104f6b1e247878b90da9f457a219a",
+  "timeZonePref" : "-- System Default --",
+  "twDelayAmount" : null,
+  "twDelayDuration" : "00:00:00:00",
+  "twDelayType" : "None",
+  "twWaitAmount" : null,
+  "twWaitDayConstraint" : "None",
+  "twWaitDuration" : "00:00:00:00",
+  "twWaitTime" : "00:00",
+  "twWaitType" : "None",
+  "twWorkflowOnly" : "-- System Default --",
+  "userEstimatedDuration" : null,
+  "variables" : [ {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_S3_BUCKET",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "26d55e6d663a48d096647bf02fe33c3f",
+    "value" : "ccoe-stonebranch-poc-1"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_NFSFILE",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "2a32b16ea8bb43ad9a371d08d74db8fd",
+    "value" : "testfile1"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_DBBACKUP_FILE",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "2fd1aaad3a8e46da9f20e8d1e7ec3336",
+    "value" : "testdb_backup.sql"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_BACKUP_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "3f076569c4e54cb486ac83d9b030eeca",
+    "value" : "/tmp/testdb_backup.sql"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_S3_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "631404219d3f4be9af0a45d40d7b39b8",
+    "value" : "s3://ccoe-stonebranch-poc-1/"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_SQLDUMP_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "68998b714d7041698d7a2dab0f0ba386",
+    "value" : "/usr/bin/mysqldump"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_AP_INSTANCE_ID",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "6c5d711a792b45f7a8357f8297ab4769",
+    "value" : "i-0d7ae2f9fb987c75e"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_NFSFILE_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "858057600b8c447c9bd2ed61fa4575fe",
+    "value" : "/var/nfs/shared_folder/testfile1"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_AWS_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "86c5a7b18e424151bdb2546f792343d5",
+    "value" : "/usr/local/bin/aws"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_DB_INSTANCE",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "8949175d8e5742ceb3f6c4844a335a84",
+    "value" : "i-04784d39a4c5c256c"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_S3_BUCKUP_FILE",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "946b215f6bcb4523aa5198260b27166c",
+    "value" : "testdb_backup.sql"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_DB_NAME",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "9bb8a0b500e84076a296b1a3db7f7323",
+    "value" : "db_example"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_FILE_INSTANCE_ID",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "a997f5238e4147a0a3c4beb6dec4cd5b",
+    "value" : "i-0fdd1546ba7a45cfa"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_APP_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "ad6f0c978f0c47a58ffebdf104a41b7b",
+    "value" : "/app/springapp-05/gs-accessing-data-mysql/complete"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_TEMP",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "d6c23b1a4c3c48c9a45be5980cdd030a",
+    "value" : "/tmp/"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_DB_INSTANCE_ID",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "2a26c5b1892649b9bb6dff95f3a2093c",
+    "value" : "i-04784d39a4c5c256c"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_MYSQL_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "bb5aeb5d1bf34a658ee225835456b5e1",
+    "value" : "/usr/bin/mysql"
+  } ],
+  "version" : 9,
+  "virtualResources" : [ ],
+  "workflowEdges" : [ {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "DBFile_S3Downld",
+      "value" : "14"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "DBFile_Unzip",
+      "value" : "15"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "DBFile_Unzip",
+      "value" : "15"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "DBFile_Check",
+      "value" : "16"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "DBServer_Start",
+      "value" : "21"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "DBServer_Check",
+      "value" : "22"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "DBServer_Check",
+      "value" : "22"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "FileServer_Start",
+      "value" : "23"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "FileServer_Start",
+      "value" : "23"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "FileServer_Check",
+      "value" : "24"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "FileServer_Check",
+      "value" : "24"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "APServer_Start",
+      "value" : "28"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "APServer_Start",
+      "value" : "28"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "APServer_Check",
+      "value" : "29"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "File_Check",
+      "value" : "26"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "File_Restore",
+      "value" : "27"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "AP_Start",
+      "value" : "30"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "AP_Check",
+      "value" : "31"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "File_S3Downld",
+      "value" : "25"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "File_Unzip",
+      "value" : "43"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "File_Unzip",
+      "value" : "43"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "File_Check",
+      "value" : "26"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "APServer_Check",
+      "value" : "29"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "ApprovalTask1",
+      "value" : "46"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "ApprovalTask1",
+      "value" : "46"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "DBFile_S3Downld",
+      "value" : "14"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "ApprovalTask1",
+      "value" : "47"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "File_S3Downld",
+      "value" : "25"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "File_Restore",
+      "value" : "27"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "ApprovalTask1",
+      "value" : "48"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "ApprovalTask1",
+      "value" : "48"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "AP_Start",
+      "value" : "30"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "DBFile_Check",
+      "value" : "16"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "DB_Restore",
+      "value" : "55"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "DB_Restore",
+      "value" : "55"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "DB_Check",
+      "value" : "56"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "DB_Check",
+      "value" : "56"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "ApprovalTask1",
+      "value" : "47"
+    }
+  } ],
+  "workflowVertices" : [ {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DBFile_S3Downld"
+    },
+    "vertexId" : "14",
+    "vertexX" : "320",
+    "vertexY" : "310"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DBFile_Unzip"
+    },
+    "vertexId" : "15",
+    "vertexX" : "460",
+    "vertexY" : "310"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DBFile_Check"
+    },
+    "vertexId" : "16",
+    "vertexX" : "620",
+    "vertexY" : "310"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DBServer_Start"
+    },
+    "vertexId" : "21",
+    "vertexX" : "300",
+    "vertexY" : "80"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DBServer_Check"
+    },
+    "vertexId" : "22",
+    "vertexX" : "420",
+    "vertexY" : "80"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "FileServer_Start"
+    },
+    "vertexId" : "23",
+    "vertexX" : "590",
+    "vertexY" : "80"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "FileServer_Check"
+    },
+    "vertexId" : "24",
+    "vertexX" : "700",
+    "vertexY" : "80"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "File_S3Downld"
+    },
+    "vertexId" : "25",
+    "vertexX" : "320",
+    "vertexY" : "460"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "File_Check"
+    },
+    "vertexId" : "26",
+    "vertexX" : "620",
+    "vertexY" : "460"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "File_Restore"
+    },
+    "vertexId" : "27",
+    "vertexX" : "820",
+    "vertexY" : "460"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "APServer_Start"
+    },
+    "vertexId" : "28",
+    "vertexX" : "840",
+    "vertexY" : "80"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "APServer_Check"
+    },
+    "vertexId" : "29",
+    "vertexX" : "960",
+    "vertexY" : "80"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "AP_Start"
+    },
+    "vertexId" : "30",
+    "vertexX" : "320",
+    "vertexY" : "600"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "AP_Check"
+    },
+    "vertexId" : "31",
+    "vertexX" : "400",
+    "vertexY" : "600"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "File_Unzip"
+    },
+    "vertexId" : "43",
+    "vertexX" : "510",
+    "vertexY" : "460"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "ApprovalTask1"
+    },
+    "vertexId" : "46",
+    "vertexX" : "1050",
+    "vertexY" : "80"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "ApprovalTask1"
+    },
+    "vertexId" : "47",
+    "vertexX" : "1050",
+    "vertexY" : "310"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "ApprovalTask1"
+    },
+    "vertexId" : "48",
+    "vertexX" : "920",
+    "vertexY" : "460"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DB_Restore"
+    },
+    "vertexId" : "55",
+    "vertexX" : "760",
+    "vertexY" : "310"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DB_Check"
+    },
+    "vertexId" : "56",
+    "vertexX" : "870",
+    "vertexY" : "310"
+  } ]
+}

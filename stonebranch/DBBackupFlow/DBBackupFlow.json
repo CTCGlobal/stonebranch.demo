@@ -1,0 +1,270 @@
+{
+  "type" : "taskWorkflow",
+  "actions" : {
+    "abortActions" : [ ],
+    "emailNotifications" : [ ],
+    "setVariableActions" : [ ],
+    "snmpNotifications" : [ ],
+    "systemOperations" : [ ]
+  },
+  "avgRunTime" : 40,
+  "avgRunTimeDisplay" : "40 Seconds",
+  "calculateCp" : false,
+  "calendar" : null,
+  "cpDuration" : null,
+  "cpDurationUnit" : "Minutes",
+  "criticalEndpoints" : [ ],
+  "customField1" : {
+    "label" : null,
+    "value" : null
+  },
+  "customField2" : {
+    "label" : null,
+    "value" : null
+  },
+  "efDayConstraint" : "None",
+  "efDuration" : "00:00:00:00",
+  "efEnabled" : false,
+  "efNthAmount" : 5,
+  "efOffsetDuration" : null,
+  "efOffsetDurationUnit" : "Minutes",
+  "efOffsetPercentage" : 0,
+  "efOffsetType" : "Percentage",
+  "efTime" : "00:00",
+  "efType" : "Time",
+  "enforceVariables" : false,
+  "exclusiveTasks" : [ ],
+  "exclusiveWithSelf" : false,
+  "executionRestriction" : "None",
+  "exportReleaseLevel" : "7.9.0.0",
+  "exportTable" : "ops_task_workflow",
+  "firstRun" : "2026-02-09 16:50:27 +0800",
+  "holdResources" : false,
+  "instanceWait" : "-- None --",
+  "instanceWaitLookup" : "Task",
+  "lastRun" : "2026-02-20 08:00:24 +0800",
+  "lastRunTime" : 24,
+  "lastRunTimeDisplay" : "24 Seconds",
+  "layoutOption" : "-- None --",
+  "lfDayConstraint" : "None",
+  "lfDuration" : "00:00:00:00",
+  "lfEnabled" : false,
+  "lfNthAmount" : 5,
+  "lfOffsetDuration" : null,
+  "lfOffsetDurationUnit" : "Minutes",
+  "lfOffsetPercentage" : 0,
+  "lfOffsetType" : "Percentage",
+  "lfTime" : "00:00",
+  "lfType" : "Time",
+  "lockVariables" : false,
+  "logLevel" : "Inherited",
+  "lsDayConstraint" : "None",
+  "lsDuration" : "00:00:00:00",
+  "lsEnabled" : false,
+  "lsNthAmount" : 5,
+  "lsTime" : "00:00",
+  "lsType" : "Time",
+  "maxRunTime" : 470,
+  "maxRunTimeDisplay" : "7 Minutes 50 Seconds",
+  "minRunTime" : 0,
+  "minRunTimeDisplay" : "0 Seconds",
+  "name" : "DBBackupFlow",
+  "notes" : [ ],
+  "numberOfTasks" : 4,
+  "opswiseGroups" : [ ],
+  "overrideCalendar" : false,
+  "overrideInstanceWait" : "No",
+  "resPriority" : 10,
+  "resPriorityVar" : null,
+  "resolveNameImmediately" : false,
+  "restrictionPeriod" : "None",
+  "restrictionPeriodAfterDate" : null,
+  "restrictionPeriodAfterTime" : null,
+  "restrictionPeriodBeforeDate" : null,
+  "restrictionPeriodBeforeTime" : null,
+  "restrictionPeriodDateList" : [ ],
+  "retainSysIds" : true,
+  "runCount" : 24,
+  "runCriteria" : [ ],
+  "runTime" : 950,
+  "simulation" : false,
+  "skippedOption" : "Show Skipped",
+  "startHeld" : false,
+  "startHeldReason" : null,
+  "stepActions" : [ ],
+  "stepConditions" : [ ],
+  "summary" : null,
+  "sysId" : "74e7e8e706424e6e9fb9da7da694e606",
+  "timeZonePref" : "-- System Default --",
+  "twDelayAmount" : null,
+  "twDelayDuration" : "00:00:00:00",
+  "twDelayType" : "None",
+  "twWaitAmount" : null,
+  "twWaitDayConstraint" : "None",
+  "twWaitDuration" : "00:00:00:00",
+  "twWaitTime" : "00:00",
+  "twWaitType" : "None",
+  "twWorkflowOnly" : "-- System Default --",
+  "userEstimatedDuration" : null,
+  "variables" : [ {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WFVL1",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "cf4f3080e24a4da18b534910badd72a1",
+    "value" : "/tmp"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WFVL2",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "e30b24f86b5c4c0c95ebafd9803a768c",
+    "value" : "date"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_DB_NAME",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "b35df9fd2f0a4511b954177a6a822b69",
+    "value" : "db_example"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_BACKUP_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "f0785cdf7f9c493c9bdb26fbb4c011b0",
+    "value" : "/tmp/testdb_backup.sql"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_S3_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "5e3b78d87bae476bac99f3fda06c0cd1",
+    "value" : "s3://ccoe-stonebranch-poc-1/"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_AWS_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "0f28be698f84462da4ea582aa7cbf6b9",
+    "value" : "/usr/local/bin/aws"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_SQLDUMP_PATH",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "cbb4212fcc2341689c326e04d841ebc8",
+    "value" : "/usr/bin/mysqldump"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_S3_BUCKET",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "3f20fe99aab848a4a5760e465ddb7d98",
+    "value" : "ccoe-stonebranch-poc-1"
+  }, {
+    "allowEmptyOption" : false,
+    "allowUnlistedOption" : false,
+    "description" : null,
+    "name" : "WF_S3_BUCKUP_FILE",
+    "options" : [ ],
+    "required" : false,
+    "sysId" : "be526db622d64ad6bafcada47e74df52",
+    "value" : "testdb_backup.sql"
+  } ],
+  "version" : 13,
+  "virtualResources" : [ ],
+  "workflowEdges" : [ {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "DBServerBKUP_MAIN",
+      "value" : "2"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "DBServerBKUP_ZIP",
+      "value" : "3"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "DBServerBKUP_ZIP",
+      "value" : "3"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "DBServerBKUP_S3UP",
+      "value" : "4"
+    }
+  }, {
+    "condition" : {
+      "value" : "Success"
+    },
+    "sourceId" : {
+      "taskName" : "DBServerBKUP_S3UP",
+      "value" : "4"
+    },
+    "straightEdge" : true,
+    "targetId" : {
+      "taskName" : "DBServerBKUP_S3Check",
+      "value" : "5"
+    }
+  } ],
+  "workflowVertices" : [ {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DBServerBKUP_MAIN"
+    },
+    "vertexId" : "2",
+    "vertexX" : "340",
+    "vertexY" : "110"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DBServerBKUP_ZIP"
+    },
+    "vertexId" : "3",
+    "vertexX" : "510",
+    "vertexY" : "110"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DBServerBKUP_S3UP"
+    },
+    "vertexId" : "4",
+    "vertexX" : "650",
+    "vertexY" : "110"
+  }, {
+    "alias" : null,
+    "conditionExpression" : null,
+    "task" : {
+      "value" : "DBServerBKUP_S3Check"
+    },
+    "vertexId" : "5",
+    "vertexX" : "810",
+    "vertexY" : "110"
+  } ]
+}
