@@ -50,7 +50,7 @@ public class MainController {
         // Add the file data
         try {
             // Reads all lines from the file into a List of Strings
-            List<String> fileLines = Files.readAllLines(Paths.get("/Users/fernando.karnagi/App/software_inventory.csv"));
+            List<String> fileLines = Files.readAllLines(Paths.get("/mnt/nfs_clientshare/testfile1"));
             response.put("file", fileLines);
         } catch (Exception e) {
             // If the file is missing or unreadable, show the error instead of crashing

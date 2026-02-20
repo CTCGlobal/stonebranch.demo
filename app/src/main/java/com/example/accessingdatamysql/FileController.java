@@ -19,10 +19,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/file")
-@Tag(name = "File", description = "File operations under /Users/fernando.karnagi/App/")
+@Tag(name = "File", description = "File operations")
 public class FileController {
 
-    private static final Path BASE_DIR = Paths.get("/Users/fernando.karnagi/App");
+    private static final Path BASE_DIR = Paths.get("/mnt/nfs_clientshare/");
 
     private Path resolveAndValidate(String filename) {
         Path resolved = BASE_DIR.resolve(filename).normalize();
