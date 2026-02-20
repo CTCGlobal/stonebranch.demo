@@ -78,30 +78,27 @@ This project consists of two major components:
 |  |                            |      |                               |   |
 |  |  +--------------------+    |      |  +------------------------+   |   |
 |  |  | AGNT0002           |    |      |  | AGNT0005               |   |   |
-|  |  | <prod-appdb-host>|    |      |  | <dr-orchestrator-host>          |   |   |
-|  |  | Role: App Server   |    |      |  | Role: DR Orchestrator  |   |   |
-|  |  | - Spring Boot      |    |      |  | - AWS CLI (ec2 cmds)   |   |   |
-|  |  | - Java 11 / Maven  |    |      |  +------------------------+   |   |
-|  |  +--------------------+    |      |                               |   |
+|  |  | <prod-app-host>    |    |      |  | <dr-app-host>          |   |   |
+|  |  | Role: App Server   |    |      |  | Role: App Server       |   |   |
+|  |  | - Maven (Spring)   |    |      |  | - Maven (Spring)       |   |   |
+|  |  +--------------------+    |      |  +------------------------+   |   |
+|  |                            |      |                               |   |
 |  |                            |      |  +------------------------+   |   |
 |  |  +--------------------+    |      |  | AGNT0006               |   |   |
-|  |  | AGNT0003           |    |      |  | <dr-appfile-host>          |   |   |
-|  |  | <prod-appdb-host>|    |      |  | Role: DR App/File Svr  |   |   |
-|  |  | Role: DB Server    |    |      |  | - gzip, cp, aws s3     |   |   |
-|  |  | - mysqldump        |    |      |  | - Maven (Spring Boot)  |   |   |
-|  |  | - gzip             |    |      |  +------------------------+   |   |
-|  |  | - AWS CLI (s3)     |    |      |                               |   |
+|  |  | AGNT0003           |    |      |  | <dr-file-host>         |   |   |
+|  |  | <prod-db-host>     |    |      |  | Role: DR File Server   |   |   |
+|  |  | Role: DB Server    |    |      |  | - gzip, aws s3         |   |   |
+|  |  | - mysql            |    |      |  |                        |   |   |
+|  |  |                    |    |      |  +------------------------+   |   |
+|  |  |                    |    |      |                               |   |
 |  |  +--------------------+    |      |  +------------------------+   |   |
 |  |                            |      |  | AGNT0007               |   |   |
-|  |  +--------------------+    |      |  | <dr-db-host>          |   |   |
+|  |  +--------------------+    |      |  | <dr-db-host>           |   |   |
 |  |  | AGNT0004           |    |      |  | Role: DR DB Server     |   |   |
-|  |  | <prod-file-host>|    |      |  | - mysql client         |   |   |
-|  |  | Role: File Server  |    |      |  | - gzip, aws s3         |   |   |
-|  |  | - gzip             |    |      |  +------------------------+   |   |
-|  |  | - AWS CLI (s3)     |    |      +-------------------------------+   |
-|  |  | - NFS mount access |    |                                          |
-|  |  +--------------------+    |                                          |
-|  |                            |                                          |
+|  |  | <prod-file-host>   |    |      |  | - mysql                |   |   |
+|  |  | Role: File Server  |    |      |  |                        |   |   |
+|  |  | - gzip, aws s3     |    |      |  +------------------------+   |   |
+|  |  +--------------------+    |      +-------------------------------+   |
 |  +----------------------------+                                          |
 |                                                                          |
 |  +-------------------------------------------------------------------+   |
@@ -165,15 +162,15 @@ This project consists of two major components:
 +=======|====================|====================|============================+
         |                    |                    |
         |                    v                    v
-        |         +----------------------------+
-        |         |       Amazon S3            |
-        |         |  <your-s3-bucket>    |
-        |         |                            |
-        |         |  testdb_backup.sql_        |
-        |         |    YYYYMMDD.gz             |
-        |         |  testfile1_                |
-        |         |    YYYYMMDD.gz             |
-        |         +----------------------------+
+        |         +---------------------------------------+
+        |         |       Amazon S3                       |
+        |         |  <your-s3-bucket>                     |
+        |         |                                       |
+        |         |  testdb_backup.sql_                   |
+        |         |    YYYYMMDD.gz                        |
+        |         |  testfile1_                           |
+        |         |    YYYYMMDD.gz                        |
+        |         +---------------------------------------+
         |                    |                    |
         |              DR Restore            DR Restore
         |              (Phase 2)             (Phase 3)
@@ -193,7 +190,7 @@ This project consists of two major components:
 |  | File Svr  |      | Server      |      | Orchestrator |                   |
 |  |           |      |             |      |              |                   |
 |  | AGNT0006  |      | AGNT0007    |      | AGNT0005     |                   |
-|  | <DR_APP_IP>|      | <DR_DB_IP>  |      | <DR_ORCH_IP>   |                   |
+|  | <DR_APP_IP>|      | <DR_DB_IP> |      | <DR_ORCH_IP> |                   |
 |  |           |      |             |      |              |                   |
 |  | Spring    |      | MySQL 8.x   |      | AWS CLI      |                   |
 |  | Boot App  |      | (restored)  |      | ec2 start/   |                   |
