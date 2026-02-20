@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,16 +48,16 @@ public class FileController {
     }
 
     @Operation(summary = "Get file content")
-    @GetMapping("/{filename}")
-    public ResponseEntity<List<String>> getFileContent(
+    @GetMapping(value = "/{filename}", produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getFileContent(
             @Parameter(description = "Name of the file") @PathVariable String filename) {
         try {
             Path filePath = resolveAndValidate(filename);
             if (!Files.exists(filePath)) {
                 return ResponseEntity.notFound().build();
             }
-            List<String> lines = Files.readAllLines(filePath);
-            return ResponseEntity.ok(lines);
+            String content = new String(Files.readAllBytes(filePath), StandardCharsets.UTF_8);
+            return ResponseEntity.ok(content);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         } catch (IOException e) {
@@ -73,7 +74,7 @@ public class FileController {
             if (Files.exists(filePath)) {
                 return ResponseEntity.badRequest().body("File already exists");
             }
-            Files.write(filePath, Collections.singletonList("# Default content"));
+            Files.write(filePath, "New file".getBytes(StandardCharsets.UTF_8));
             return ResponseEntity.ok("File created");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Invalid filename");
@@ -83,16 +84,16 @@ public class FileController {
     }
 
     @Operation(summary = "Update file content")
-    @PutMapping("/{filename}")
+    @PutMapping(value = "/{filename}", consumes = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> updateFileContent(
             @Parameter(description = "Name of the file") @PathVariable String filename,
-            @RequestBody List<String> lines) {
+            @RequestBody String content) {
         try {
             Path filePath = resolveAndValidate(filename);
             if (!Files.exists(filePath)) {
                 return ResponseEntity.notFound().build();
             }
-            Files.write(filePath, lines);
+            Files.write(filePath, content.getBytes(StandardCharsets.UTF_8));
             return ResponseEntity.ok("File updated");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Invalid filename");
