@@ -57,9 +57,9 @@ This project consists of two major components:
 +===========================================================================+
 |                                                                           |
 |  +----------------------------+                                           |
-|  |   OMS / Controller (UC)    |                                           |
+|  |   UC + OMS (Co-located)    |                                           |
 |  |   CTC On-Premise           |                                           |
-|  |   (Ubuntu VM)              |                                           |
+|  |   (Single Ubuntu VM)       |                                           |
 |  |                            |                                           |
 |  |  - Workflow Engine         |                                           |
 |  |  - Task Scheduler          |                                           |
@@ -68,39 +68,40 @@ This project consists of two major components:
 |  |  - Credential Vault        |                                           |
 |  |  - Audit / Logging         |                                           |
 |  |  - Universal Control Plane |                                           |
-|  +-------------+--------------+                                           |
-|                |                                                          |
-|                +-------- Agent Communication (TLS) --------+              |
-|                |                                           |              |
-|  +-------------v--------------+      +---------------------v---------+   |
-|  |    PRODUCTION AGENTS       |      |      DR AGENTS                |   |
-|  |    (CTC On-Premise VMs)    |      |      (AWS EC2 Instances)      |   |
-|  |                            |      |                               |   |
-|  |  +--------------------+    |      |  +------------------------+   |   |
-|  |  | AGNT0002           |    |      |  | AGNT0005               |   |   |
-|  |  | <prod-app-host>    |    |      |  | <dr-app-host>          |   |   |
-|  |  | Role: App Server   |    |      |  | Role: App Server       |   |   |
-|  |  | - Maven (Spring)   |    |      |  | - Maven (Spring)       |   |   |
-|  |  +--------------------+    |      |  +------------------------+   |   |
-|  |                            |      |                               |   |
-|  |                            |      |  +------------------------+   |   |
-|  |  +--------------------+    |      |  | AGNT0006               |   |   |
-|  |  | AGNT0003           |    |      |  | <dr-file-host>         |   |   |
-|  |  | <prod-db-host>     |    |      |  | Role: DR File Server   |   |   |
-|  |  | Role: DB Server    |    |      |  | - gzip, aws s3         |   |   |
-|  |  | - mysql            |    |      |  |                        |   |   |
-|  |  |                    |    |      |  +------------------------+   |   |
-|  |  |                    |    |      |                               |   |
-|  |  +--------------------+    |      |  +------------------------+   |   |
-|  |                            |      |  | AGNT0007               |   |   |
-|  |  +--------------------+    |      |  | <dr-db-host>           |   |   |
-|  |  | AGNT0004           |    |      |  | Role: DR DB Server     |   |   |
-|  |  | <prod-file-host>   |    |      |  | - mysql                |   |   |
-|  |  | Role: File Server  |    |      |  |                        |   |   |
-|  |  | - gzip, aws s3     |    |      |  +------------------------+   |   |
-|  |  +--------------------+    |      +-------------------------------+   |
-|  +----------------------------+                                          |
-|                                                                          |
+|  +------+---------------+-----+                                           |
+|         |               |                                                 |
+|         |  Agent Comm.  |  OMS-to-UC Comm. (TLS)                          |
+|         |   (TLS)       |                                                 |
+|  +------v-----------+   +----------------v-----------------+             |
+|  | PRODUCTION ENV   |   |   DR / AWS ENV                   |             |
+|  | (CTC On-Premise) |   |   (AWS EC2 Instance)             |             |
+|  |                  |   |                                  |             |
+|  | +------------+   |   |  - Relay for DR Agents           |             |
+|  | | AGNT0002   |   |   |  - Forwards tasks from UC        |             |
+|  | | App Server |   |   |  - Reports results back to UC    |             |
+|  | +------------+   |   |                                  |             |
+|  |                  |   |  +------------------------+      |             |
+|  | +------------+   |   |  | AGNT0005               |      |             |
+|  | | AGNT0003   |   |   |  | <dr-app-host>          |      |             |
+|  | | DB Server  |   |   |  | Role: DR Orchestrator  |      |             |
+|  | +------------+   |   |  | - AWS CLI (EC2 mgmt)   |      |             |
+|  |                  |   |  +------------------------+      |             |
+|  | +------------+   |   |                                  |             |
+|  | | AGNT0004   |   |   |  +------------------------+      |             |
+|  | | File Server|   |   |  | AGNT0006               |      |             |
+|  | +------------+   |   |  | <dr-app-file-host>     |      |             |
+|  +------------------+   |  | Role: DR AppFile Svr   |      |             |
+|                         |  | - gzip, aws s3         |      |             |
+|                         |  +------------------------+      |             |
+|                         |                                  |             |
+|                         |  +------------------------+      |             |
+|                         |  | AGNT0007               |      |             |
+|                         |  | <dr-db-host>           |      |             |
+|                         |  | Role: DR DB Server     |      |             |
+|                         |  | - mysql                |      |             |
+|                         |  +------------------------+      |             |
+|                         +----------------------------------+             |
+|                                                                           |
 |  +-------------------------------------------------------------------+   |
 |  |                    SHARED SERVICES                                 |   |
 |  |                                                                   |   |
@@ -116,11 +117,12 @@ This project consists of two major components:
 
 ### How the Components Interact
 
-1. **OMS (Operations Manager Server)** is the brain -- it schedules workflows, dispatches tasks to agents, manages variables, and handles approvals. There is a single OMS on the CTC on-premise Ubuntu VM.
-2. **Universal Control Plane** (on the CTC on-premise OMS) provides centralized governance, managing both production on-premise agents and DR agents running on AWS EC2 instances from a single control point.
-3. **Universal Agents** are lightweight daemons installed on each managed server. They receive task instructions from the OMS over TLS, execute shell commands locally, and report results back. Both on-premise and AWS agents connect back to the single on-premise OMS.
-4. **Amazon S3** serves as the intermediate backup store -- production agents push backups up, DR agents pull them down during failover.
-5. **Approval Engine** pauses the DR workflow at 3 critical gates, requiring human sign-off before proceeding.
+1. **UC + OMS (Co-located on-premise)** -- The Universal Controller (UC) and Operations Manager Server (OMS) run together on the same CTC on-premise Ubuntu VM. This co-located instance is the central brain: it schedules workflows, manages variables, handles approvals, and governs all connected agents and OMS instances.
+2. **DR OMS (AWS)** -- There is a dedicated OMS running in the AWS DR environment (on an EC2 instance). AWS agents do **not** connect directly to the on-premise UC; instead, they register with this AWS OMS. The AWS OMS then connects back to the on-premise UC, which retains full control over both environments.
+3. **Universal Control Plane** (on the CTC on-premise UC/OMS) provides centralized governance -- it manages the on-premise agents directly and manages the DR AWS agents indirectly via the AWS OMS, all from a single control point.
+4. **Universal Agents** are lightweight daemons installed on each managed server. On-premise agents connect directly to the on-premise OMS/UC. DR agents (AWS EC2) connect to the AWS OMS first, which relays task instructions and results to/from the on-premise UC over TLS.
+5. **Amazon S3** serves as the intermediate backup store -- production agents push backups up, DR agents pull them down during failover.
+6. **Approval Engine** pauses the DR workflow at 3 critical gates, requiring human sign-off before proceeding.
 
 ---
 
@@ -181,8 +183,9 @@ This project consists of two major components:
 |       |              AWS EC2 Instances           |                           |
 +=======|==========================================|===========================+
 |                                                                             |
-|  (No OMS here -- all DR agents connect back to                              |
-|   the CTC on-premise OMS via Universal Control Plane over TLS)              |
+|  OMS (AWS) -- DR agents connect to this AWS OMS first.                      |
+|  The AWS OMS then connects back to the UC on-premise, which manages         |
+|  both the on-premise OMS and this AWS OMS via Universal Control Plane.      |
 |                                                                             |
 |  +-----------+      +-------------+      +--------------+                   |
 |  | EC2:      |      | EC2:        |      | EC2:         |                   |
@@ -539,7 +542,7 @@ Starts the Spring Boot application and verifies it is running.
 
 Before executing any workflow, ensure the following are in place:
 
-1. **Stonebranch OMS** is installed and running on the CTC on-premise Ubuntu VM (primary OMS + Universal Control Plane). This single OMS manages all agents across both on-premise and AWS environments.
+1. **Stonebranch UC + OMS** are installed and running together on the same CTC on-premise Ubuntu VM. This co-located instance acts as the primary control plane and manages agents directly on-premise. A separate **OMS** is also installed and running in the AWS DR environment (on an EC2 instance) -- DR agents register with this AWS OMS, which in turn connects back to the on-premise UC. The UC on-premise manages both the on-premise OMS and the AWS OMS from a single control point.
 
 2. **Universal Agents** are installed and registered:
    - Production: VMs for Application, MySQL, and File Server
@@ -670,7 +673,7 @@ curl -X POST "$OMS_URL/api/task" \
    sudo /etc/init.d/ubtagent restart
    ```
 
-> **Note:** DR agents (`AGNT0005`, `AGNT0006`, `AGNT0007`) may be offline if the DR EC2 instances are stopped. The `AGNT0005` (Orchestrator) must always be running on an always-on EC2 instance so it can start the other DR instances during failover.
+> **Note:** DR agents (`AGNT0005`, `AGNT0006`, `AGNT0007`) connect to the AWS OMS (also running on an EC2 instance in the DR environment), not directly to the on-premise UC. The AWS OMS bridges agent communication back to the on-premise UC. DR agents may appear offline if their EC2 instances are stopped. The `AGNT0005` (Orchestrator) and the AWS OMS must always be running on always-on EC2 instances so they can start the other DR instances during failover.
 
 ---
 
